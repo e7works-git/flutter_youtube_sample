@@ -1,4 +1,4 @@
-package com.e7works.vchatcloud_youtube
+package com.vchatcloud.flutter.youtube
 
 import io.flutter.embedding.android.FlutterActivity
 

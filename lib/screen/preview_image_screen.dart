@@ -1,7 +1,6 @@
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_youtube/main.dart';
 import 'package:flutter_youtube/util/util.dart';
 import 'package:flutter_youtube/widget/common/anchor.dart';
 import 'package:vchatcloud_flutter_sdk/vchatcloud_flutter_sdk.dart';
@@ -165,7 +164,6 @@ class _PreviewImageScreenState extends State<PreviewImageScreen>
                             download() async {
                               Util.showToast("저장중입니다.");
                               await VChatCloudApi.download(
-                                  roomId: roomId,
                                   file: widget.data,
                                   downloadPath: await Util.getDownloadPath());
                               Util.showToast("파일이 저장되었습니다.");

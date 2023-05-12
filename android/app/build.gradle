@@ -51,14 +51,14 @@ android {
     defaultConfig {
         multiDexEnabled true
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.e7works.vchatcloud_youtube"
+        applicationId "com.vchatcloud.flutter.youtube"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         // minSdkVersion flutter.minSdkVersion
         minSdkVersion 19
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 6
-        versionName "1.2.3"
+        versionCode 9
+        versionName "1.2.6"
     }
 
     signingConfigs {
