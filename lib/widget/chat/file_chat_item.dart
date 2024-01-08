@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_youtube/util/util.dart';
-import 'package:flutter_youtube/vo/chat_item.dart';
-import 'package:flutter_youtube/widget/chat/chat_base_item.dart';
-import 'package:flutter_youtube/widget/common/anchor.dart';
-import 'package:flutter_youtube/widget/common/text_middle_ellipsis.dart';
+import 'package:flutter_video/util/util.dart';
+import 'package:flutter_video/vo/chat_item.dart';
+import 'package:flutter_video/widget/chat/chat_base_item.dart';
+import 'package:flutter_video/widget/common/anchor.dart';
+import 'package:flutter_video/widget/common/text_middle_ellipsis.dart';
 import 'package:vchatcloud_flutter_sdk/vchatcloud_flutter_sdk.dart';
 
 class FileChatItem extends StatefulWidget {

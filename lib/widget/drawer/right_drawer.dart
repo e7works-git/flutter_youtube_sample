@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_youtube/widget/drawer/client_list_screen.dart';
-import 'package:flutter_youtube/widget/drawer/file_box_screen.dart';
-import 'package:flutter_youtube/widget/drawer/help_screen.dart';
+import 'package:flutter_video/widget/drawer/client_list_screen.dart';
+import 'package:flutter_video/widget/drawer/file_box_screen.dart';
+import 'package:flutter_video/widget/drawer/help_screen.dart';
 
 class RightDrawer extends StatefulWidget {
   final TargetDrawer target;

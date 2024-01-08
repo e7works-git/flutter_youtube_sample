@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_youtube/vo/chat_item.dart';
-import 'package:flutter_youtube/widget/chat/chat_base_item.dart';
-import 'package:flutter_youtube/widget/chat/file_chat_item.dart';
+import 'package:flutter_video/vo/chat_item.dart';
+import 'package:flutter_video/widget/chat/chat_base_item.dart';
+import 'package:flutter_video/widget/chat/file_chat_item.dart';
 import 'package:vchatcloud_flutter_sdk/vchatcloud_flutter_sdk.dart';
 
 import 'video_player_screen.dart';

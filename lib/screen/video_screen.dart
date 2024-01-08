@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_youtube/util/util.dart';
-import 'package:flutter_youtube/widget/chat/video_player_screen.dart';
-import 'package:flutter_youtube/widget/common/anchor.dart';
+import 'package:flutter_video/util/util.dart';
+import 'package:flutter_video/widget/chat/video_player_screen.dart';
+import 'package:flutter_video/widget/common/anchor.dart';
 import 'package:vchatcloud_flutter_sdk/vchatcloud_flutter_sdk.dart';
 import 'package:video_player/video_player.dart';
 

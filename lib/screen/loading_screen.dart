@@ -1,9 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_youtube/custom_handler.dart';
-import 'package:flutter_youtube/screen/footer.dart';
-import 'package:flutter_youtube/store/channel_store.dart';
-import 'package:provider/provider.dart';
-import 'package:vchatcloud_flutter_sdk/vchatcloud_flutter_sdk.dart';
+import 'package:flutter_video/screen/footer.dart';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({super.key});
@@ -18,8 +16,7 @@ class _LoadingScreen extends State<LoadingScreen> {
   @override
   void initState() {
     super.initState();
-    VChatCloud.connect(CustomHandler()).then((channel) {
-      Provider.of<ChannelStore>(context, listen: false).setChannel(channel);
+    Timer(const Duration(milliseconds: 500), () {
       Navigator.pushReplacementNamed(context, "/login");
     });
   }

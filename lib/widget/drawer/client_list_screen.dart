@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_youtube/store/channel_store.dart';
-import 'package:flutter_youtube/widget/common/anchor.dart';
+import 'package:flutter_video/store/channel_store.dart';
+import 'package:flutter_video/widget/common/anchor.dart';
 import 'package:provider/provider.dart';
 import 'package:vchatcloud_flutter_sdk/vchatcloud_flutter_sdk.dart';
 

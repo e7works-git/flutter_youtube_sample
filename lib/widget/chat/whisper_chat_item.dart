@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_youtube/store/channel_store.dart';
-import 'package:flutter_youtube/util/util.dart';
-import 'package:flutter_youtube/vo/chat_item.dart';
+import 'package:flutter_video/store/channel_store.dart';
+import 'package:flutter_video/util/util.dart';
+import 'package:flutter_video/vo/chat_item.dart';
 import 'package:provider/provider.dart';
 
 class WhisperChatItem extends StatelessWidget {

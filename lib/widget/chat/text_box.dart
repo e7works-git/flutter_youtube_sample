@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_youtube/util/util.dart';
-import 'package:flutter_youtube/vo/chat_item.dart';
-import 'package:flutter_youtube/widget/chat/open_graph_item.dart';
-import 'package:flutter_youtube/widget/common/anchor.dart';
+import 'package:flutter_video/util/util.dart';
+import 'package:flutter_video/vo/chat_item.dart';
+import 'package:flutter_video/widget/chat/open_graph_item.dart';
+import 'package:flutter_video/widget/common/anchor.dart';
 import 'package:vchatcloud_flutter_sdk/vchatcloud_flutter_sdk.dart';
 
 class TextBox extends StatelessWidget {
@@ -35,8 +35,12 @@ class TextBox extends StatelessWidget {
       texts.add(
         TextSpan(
           text: n,
-          style: const TextStyle(
-            color: Color(0xff333333),
+          style: TextStyle(
+            color: data.isDeleteChatting
+                ? const Color(0xff999999)
+                : const Color(0xff333333),
+            fontWeight:
+                data.isDeleteChatting ? FontWeight.w200 : FontWeight.normal,
             fontSize: 14.0,
           ),
         ),

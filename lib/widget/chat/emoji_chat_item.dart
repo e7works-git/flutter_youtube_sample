@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_youtube/vo/chat_item.dart';
-import 'package:flutter_youtube/widget/chat/chat_base_item.dart';
+import 'package:flutter_video/vo/chat_item.dart';
+import 'package:flutter_video/widget/chat/chat_base_item.dart';
 
 class EmojiChatItem extends StatelessWidget {
   const EmojiChatItem(

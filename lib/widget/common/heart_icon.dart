@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_youtube/main.dart';
-import 'package:flutter_youtube/widget/common/anchor.dart';
+import 'package:flutter_video/main.dart';
+import 'package:flutter_video/widget/common/anchor.dart';
 import 'package:vchatcloud_flutter_sdk/vchatcloud_flutter_sdk.dart';
 
 class HeartIcon extends StatefulWidget {

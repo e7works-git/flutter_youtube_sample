@@ -1,10 +1,10 @@
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_youtube/main.dart';
-import 'package:flutter_youtube/store/files_store.dart';
-import 'package:flutter_youtube/util/util.dart';
-import 'package:flutter_youtube/widget/common/anchor.dart';
-import 'package:flutter_youtube/widget/common/text_middle_ellipsis.dart';
+import 'package:flutter_video/main.dart';
+import 'package:flutter_video/store/files_store.dart';
+import 'package:flutter_video/util/util.dart';
+import 'package:flutter_video/widget/common/anchor.dart';
+import 'package:flutter_video/widget/common/text_middle_ellipsis.dart';
 import 'package:provider/provider.dart';
 import 'package:vchatcloud_flutter_sdk/vchatcloud_flutter_sdk.dart';
 
@@ -69,7 +69,7 @@ class _FileBoxScreenState extends State<FileBoxScreen> {
               ),
               child: TabBar(
                 indicatorColor: const Color(0xff333333),
-                indicatorPadding: const EdgeInsets.symmetric(horizontal: 25),
+                // indicatorPadding: const EdgeInsets.symmetric(horizontal: 25),
                 tabs: tabList
                     .map(
                       (element) => Tab(

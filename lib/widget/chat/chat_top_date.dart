@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_youtube/vo/chat_item.dart';
+import 'package:flutter_video/vo/chat_item.dart';
 
 class ChatTopDate extends StatelessWidget {
   final ChatItem data;

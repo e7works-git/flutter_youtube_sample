@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_youtube/widget/common/anchor.dart';
+import 'package:flutter_video/widget/common/anchor.dart';
 
 class CustomSwitch extends StatefulWidget {
   final bool value;

@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_youtube/vo/chat_item.dart';
+import 'package:flutter_video/vo/chat_item.dart';
 
 class UserLeaveItem extends StatelessWidget {
   final ChatItem data;

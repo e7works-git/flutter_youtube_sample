@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_youtube/vo/chat_item.dart';
-import 'package:flutter_youtube/widget/chat/chat_base_item.dart';
-import 'package:flutter_youtube/widget/chat/text_box.dart';
+import 'package:flutter_video/vo/chat_item.dart';
+import 'package:flutter_video/widget/chat/chat_base_item.dart';
+import 'package:flutter_video/widget/chat/text_box.dart';
 
 class TextChatItem extends StatelessWidget {
   final ChatItem data;

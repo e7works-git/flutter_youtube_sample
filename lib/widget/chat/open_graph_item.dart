@@ -1,7 +1,7 @@
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_youtube/util/util.dart';
-import 'package:flutter_youtube/widget/common/anchor.dart';
+import 'package:flutter_video/util/util.dart';
+import 'package:flutter_video/widget/common/anchor.dart';
 import 'package:vchatcloud_flutter_sdk/vchatcloud_flutter_sdk.dart';
 
 class OpenGraphItem extends StatefulWidget {

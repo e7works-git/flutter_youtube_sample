@@ -6,28 +6,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_youtube/main.dart';
-import 'package:flutter_youtube/store/channel_store.dart';
-import 'package:flutter_youtube/store/emoji_store.dart';
-import 'package:flutter_youtube/store/player_store.dart';
-import 'package:flutter_youtube/util/logger.dart';
-import 'package:flutter_youtube/util/util.dart';
-import 'package:flutter_youtube/vo/chat_item.dart';
-import 'package:flutter_youtube/widget/chat/chat_notice_item.dart';
-import 'package:flutter_youtube/widget/chat/emoji_chat_item.dart';
-import 'package:flutter_youtube/widget/chat/emoji_images.dart';
-import 'package:flutter_youtube/widget/chat/emoji_list.dart';
-import 'package:flutter_youtube/widget/chat/file_chat_item.dart';
-import 'package:flutter_youtube/widget/chat/image_chat_item.dart';
-import 'package:flutter_youtube/widget/chat/text_chat_item.dart';
-import 'package:flutter_youtube/widget/chat/user_join_item.dart';
-import 'package:flutter_youtube/widget/chat/user_leave_item.dart';
-import 'package:flutter_youtube/widget/chat/video_chat_item.dart';
-import 'package:flutter_youtube/widget/chat/whisper_chat_item.dart';
-import 'package:flutter_youtube/widget/common/anchor.dart';
-import 'package:flutter_youtube/widget/common/heart_icon.dart';
-import 'package:flutter_youtube/widget/common/youtube_player.dart';
-import 'package:flutter_youtube/widget/drawer/right_drawer.dart';
+import 'package:flutter_video/main.dart';
+import 'package:flutter_video/store/channel_store.dart';
+import 'package:flutter_video/store/emoji_store.dart';
+import 'package:flutter_video/store/player_store.dart';
+import 'package:flutter_video/util/logger.dart';
+import 'package:flutter_video/util/util.dart';
+import 'package:flutter_video/vo/chat_item.dart';
+import 'package:flutter_video/widget/chat/chat_notice_item.dart';
+import 'package:flutter_video/widget/chat/emoji_chat_item.dart';
+import 'package:flutter_video/widget/chat/emoji_images.dart';
+import 'package:flutter_video/widget/chat/emoji_list.dart';
+import 'package:flutter_video/widget/chat/file_chat_item.dart';
+import 'package:flutter_video/widget/chat/image_chat_item.dart';
+import 'package:flutter_video/widget/chat/text_chat_item.dart';
+import 'package:flutter_video/widget/chat/user_join_item.dart';
+import 'package:flutter_video/widget/chat/user_leave_item.dart';
+import 'package:flutter_video/widget/chat/video_chat_item.dart';
+import 'package:flutter_video/widget/chat/whisper_chat_item.dart';
+import 'package:flutter_video/widget/common/anchor.dart';
+import 'package:flutter_video/widget/common/heart_icon.dart';
+import 'package:flutter_video/widget/common/youtube_player.dart';
+import 'package:flutter_video/widget/drawer/right_drawer.dart';
 import 'package:provider/provider.dart';
 import 'package:vchatcloud_flutter_sdk/constants.dart';
 import 'package:vchatcloud_flutter_sdk/vchatcloud_flutter_sdk.dart';
@@ -90,7 +90,7 @@ class ChatScreenState extends State<ChatScreen> {
   void dispose() {
     _scrollController.dispose();
     _focus.dispose();
-    channel.leave();
+    VChatCloud.disconnect(VChatCloudResult.success);
     super.dispose();
   }
 
@@ -427,8 +427,8 @@ class ChatScreenState extends State<ChatScreen> {
     emoji.initEmojiList();
     emoji.initChildEmojiList();
 
-    return Column(
-      children: const [
+    return const Column(
+      children: [
         EmojiImages(),
         EmojiList(),
       ],

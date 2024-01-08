@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_youtube/store/channel_store.dart';
-import 'package:flutter_youtube/util/util.dart';
-import 'package:flutter_youtube/vo/chat_item.dart';
+import 'package:flutter_video/store/channel_store.dart';
+import 'package:flutter_video/util/util.dart';
+import 'package:flutter_video/vo/chat_item.dart';
 import 'package:provider/provider.dart';
 import 'package:vchatcloud_flutter_sdk/vchatcloud_flutter_sdk.dart';
 
-class ChatBaseItem extends StatelessWidget {
+class ChatBaseItem extends StatefulWidget {
   final ChatItem data;
   final Widget content;
   final bool showTime;
@@ -18,9 +18,14 @@ class ChatBaseItem extends StatelessWidget {
   });
 
   @override
+  State<ChatBaseItem> createState() => _ChatBaseItemState();
+}
+
+class _ChatBaseItemState extends State<ChatBaseItem> {
+  @override
   Widget build(BuildContext context) {
     var channel = context.read<ChannelStore>().channel;
-    bool isWhisper = data.messageType == MessageType.whisper;
+    bool isWhisper = widget.data.messageType == MessageType.whisper;
 
     return Row(
       mainAxisSize: MainAxisSize.max,
@@ -28,8 +33,8 @@ class ChatBaseItem extends StatelessWidget {
       children: [
         GestureDetector(
           onLongPress: () {
-            if (!data.isMe) {
-              Util.sendWhisperDialog(context, channel, data);
+            if (!widget.data.isMe && !widget.data.isDeleteChatting) {
+              Util.chatLongPressDialog(context, channel, widget.data);
             }
           },
           child: Row(
@@ -51,7 +56,7 @@ class ChatBaseItem extends StatelessWidget {
                     Radius.circular(13),
                   ),
                   child: Image.asset(
-                    "assets/profile/profile_img_${data.userInfo?['profile'].toString() ?? '1'}.png",
+                    "assets/profile/profile_img_${widget.data.userInfo?['profile'].toString() ?? '1'}.png",
                   ),
                 ),
               ),
@@ -63,7 +68,7 @@ class ChatBaseItem extends StatelessWidget {
                     SizedBox(
                       width: 150,
                       child: Text(
-                        data.nickName ?? '홍길동',
+                        widget.data.nickName ?? '홍길동',
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontSize: 14.0,
@@ -73,18 +78,18 @@ class ChatBaseItem extends StatelessWidget {
                     ),
                     if (isWhisper)
                       Text(
-                        data.isMe ? '님에게' : '님이',
+                        widget.data.isMe ? '님에게' : '님이',
                         style: const TextStyle(
                           fontSize: 14.0,
                           color: Color(0xff666666),
                         ),
                       ),
                     const SizedBox(height: 5),
-                    content,
-                    if (showTime) ...[
+                    widget.content,
+                    if (widget.showTime) ...[
                       const SizedBox(height: 5),
                       Text(
-                        Util.getCurrentDate(data.messageDt).toString(),
+                        Util.getCurrentDate(widget.data.messageDt).toString(),
                         style: const TextStyle(
                           color: Color(0xffbbbbbb),
                           fontSize: 10.0,

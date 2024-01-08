@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_youtube/store/emoji_store.dart';
+import 'package:flutter_video/store/emoji_store.dart';
 import 'package:provider/provider.dart';
 
 class EmojiImages extends StatefulWidget {

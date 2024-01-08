@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_youtube/custom_handler.dart';
-import 'package:flutter_youtube/main.dart';
-import 'package:flutter_youtube/screen/footer.dart';
-import 'package:flutter_youtube/store/channel_store.dart';
-import 'package:flutter_youtube/store/user_store.dart';
-import 'package:flutter_youtube/util/logger.dart';
-import 'package:flutter_youtube/util/util.dart';
-import 'package:flutter_youtube/vo/chat_item.dart';
-import 'package:flutter_youtube/widget/common/anchor.dart';
+import 'package:flutter_video/custom_handler.dart';
+import 'package:flutter_video/main.dart';
+import 'package:flutter_video/screen/footer.dart';
+import 'package:flutter_video/store/channel_store.dart';
+import 'package:flutter_video/store/user_store.dart';
+import 'package:flutter_video/util/logger.dart';
+import 'package:flutter_video/util/util.dart';
+import 'package:flutter_video/vo/chat_item.dart';
+import 'package:flutter_video/widget/common/anchor.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vchatcloud_flutter_sdk/vchatcloud_flutter_sdk.dart';
@@ -31,6 +31,8 @@ class _LoginScreen extends State<LoginScreen> {
   int? imageIndex;
   Image? selectedImage;
   late final SharedPreferences storage;
+  bool termsIsChecked = false;
+  double loginBackgroundHeight = 220;
 
   @override
   void initState() {
@@ -84,52 +86,57 @@ class _LoginScreen extends State<LoginScreen> {
 
   void goLogin() async {
     if (loginController.text.trim().isEmpty) {
-      Util.showSnackBar(context, '이름을 입력해주세요.');
-    } else {
-      var channelStore = Provider.of<ChannelStore>(context, listen: false);
-      var nickName = loginController.text.trim();
-      if (storage.getString("clientKey") == null) {
-        storage.setString("clientKey", Util.getRandomString(10));
-      }
-      var clientKey = storage.getString("clientKey");
-      var user = UserModel(
-        roomId: roomId,
-        nickName: nickName,
-        userInfo: {"profile": imageIndex.toString()},
-        clientKey: clientKey,
+      return Util.showToast('이름을 입력해주세요.');
+    }
+
+    if (!termsIsChecked) {
+      return Util.showToast('약관에 동의해주세요.');
+    }
+
+    var channelStore = Provider.of<ChannelStore>(context, listen: false);
+    var nickName = loginController.text.trim();
+    if (storage.getString("clientKey") == null) {
+      storage.setString("clientKey", Util.getRandomString(10));
+    }
+    var clientKey = storage.getString("clientKey");
+    var user = UserModel(
+      roomId: roomId,
+      nickName: nickName,
+      userInfo: {"profile": imageIndex.toString()},
+      clientKey: clientKey,
+    );
+    storage.setString("nickName", user.nickName);
+    storage.setInt("imageIndex", imageIndex ?? 1);
+
+    try {
+      channelStore.setChannel(
+        await VChatCloud.connect(CustomHandler()),
       );
-      storage.setString("nickName", user.nickName);
-      storage.setInt("imageIndex", imageIndex ?? 1);
 
-      try {
-        channelStore.setChannel(
-          await VChatCloud.connect(CustomHandler()),
-        );
+      var history = await channelStore.channel!.join(user);
+      if (context.mounted) {
+        var userStore = Provider.of<UserStore>(context, listen: false);
+        userStore.name = nickName;
+        userStore.changeIconIndex(imageIndex);
 
-        var history = await channelStore.channel!.join(user);
-        if (context.mounted) {
-          var userStore = Provider.of<UserStore>(context, listen: false);
-          userStore.name = nickName;
-          userStore.changeIconIndex(imageIndex);
+        // 히스토리 내용 추가
+        List<ChatItem> list = [];
+        list.addAll((history.body["history"] as List<dynamic>)
+            .reversed // 역순으로 추가
+            .map((e) => ChatItem.fromJson(e as Map<String, dynamic>)));
+        var channelStore = Provider.of<ChannelStore>(context, listen: false);
+        channelStore.setChatLog(list);
 
-          // 히스토리 내용 추가
-          List<ChatItem> list = [];
-          list.addAll((history.body["history"] as List<dynamic>)
-              .reversed // 역순으로 추가
-              .map((e) => ChatItem.fromJson(e as Map<String, dynamic>)));
-          var channelStore = Provider.of<ChannelStore>(context, listen: false);
-          channelStore.setChatLog(list);
-
-          Navigator.pushNamed(context, "/chat_screen");
-        }
-      } catch (e) {
-        VChatCloud.disconnect();
-        if (e is VChatCloudError) {
-          Util.showToast(e.message);
-        } else if (e is Error) {
-          logger.e("$e ${e.stackTrace}");
-          Util.showToast("알 수 없는 오류로 접속에 실패했습니다.");
-        }
+        Navigator.pushNamed(context, "/chat_screen");
+      }
+    } catch (e) {
+      if (e is VChatCloudError) {
+        logger.e(e.message);
+        VChatCloud.disconnect(VChatCloudResult.fromCode(e.code));
+      } else if (e is Error) {
+        logger.e("$e ${e.stackTrace}");
+        VChatCloud.disconnect(VChatCloudResult.systemError);
+        Util.showToast("알 수 없는 오류로 접속에 실패했습니다.");
       }
     }
   }
@@ -169,215 +176,259 @@ class _LoginScreen extends State<LoginScreen> {
                   ],
                 ),
               ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Center(
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: [
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            /* logo */
-                            SizedBox(
-                              width: 200,
-                              child: Image.asset(
-                                'assets/common/logo_noSquare.png',
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                            /* title */
-                            Container(
-                              margin: const EdgeInsets.only(
-                                top: 22,
-                                bottom: 95,
-                              ),
-                              child: const Text(
-                                "사용하실 프로필 이미지와 이름을 입력하세요",
-                                style: TextStyle(
-                                  color: Color(0x80ffffff),
-                                  fontSize: 14.0,
+              child: SafeArea(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Center(
+                      child: Stack(
+                        alignment: Alignment.bottomCenter,
+                        children: [
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              /* logo */
+                              SizedBox(
+                                width: 200,
+                                child: Image.asset(
+                                  'assets/common/logo_noSquare.png',
+                                  fit: BoxFit.contain,
                                 ),
                               ),
-                            ),
+                              /* title */
+                              Container(
+                                margin: const EdgeInsets.only(
+                                  top: 22,
+                                  bottom: 95,
+                                ),
+                                child: const Text(
+                                  "사용하실 프로필 이미지와 이름을 입력하세요",
+                                  style: TextStyle(
+                                    color: Color(0x80ffffff),
+                                    fontSize: 14.0,
+                                  ),
+                                ),
+                              ),
 
-                            /* loginBG Area */
-                            Container(
-                              width: 280,
-                              height: 200,
-                              decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(15),
+                              /* loginBG Area */
+                              Container(
+                                width: 280,
+                                height: loginBackgroundHeight,
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(15),
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Color(0x4cc9c9c9),
+                                      offset: Offset(1, 1.73),
+                                      blurRadius: 7,
+                                      spreadRadius: 0,
+                                    )
+                                  ],
+                                  color: Color(0xffffffff),
                                 ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Color(0x4cc9c9c9),
-                                    offset: Offset(1, 1.73),
-                                    blurRadius: 7,
-                                    spreadRadius: 0,
-                                  )
-                                ],
-                                color: Color(0xffffffff),
-                              ),
-                              child: Column(
-                                children: [
-                                  /* input line */
-                                  Column(
-                                    children: [
-                                      Container(
-                                        height: 30,
-                                        margin: const EdgeInsets.only(
-                                          left: 35,
-                                          right: 35,
-                                          top: 75,
-                                        ),
-                                        alignment: Alignment.topLeft,
-                                        child: TextField(
-                                          controller: loginController,
-                                          maxLength: 8,
-                                          scrollPadding: const EdgeInsets.only(
-                                            bottom: 120,
+                                child: Column(
+                                  children: [
+                                    /* input line */
+                                    Column(
+                                      children: [
+                                        Container(
+                                          height: 30,
+                                          margin: const EdgeInsets.only(
+                                            left: 35,
+                                            right: 35,
+                                            top: 60,
                                           ),
-                                          keyboardType: TextInputType.text,
-                                          onSubmitted: (value) =>
-                                              goLogin(), //키보드로 엔터 클릭 시 호출,
-                                          style: const TextStyle(
-                                            color: Color(0xff333333),
-                                            fontSize: 14,
-                                          ),
-                                          cursorColor: const Color(0xff2a61be),
-                                          decoration: const InputDecoration(
-                                            counterText: '',
-                                            border: UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Color(0xffeeeeee),
-                                                width: 2,
-                                              ),
+                                          alignment: Alignment.topLeft,
+                                          child: TextField(
+                                            controller: loginController,
+                                            maxLength: 8,
+                                            scrollPadding:
+                                                const EdgeInsets.only(
+                                              bottom: 120,
                                             ),
-                                            enabledBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Color(0xffeeeeee),
-                                                width: 2,
-                                              ),
-                                            ),
-                                            focusedBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Color(0xff2a61be),
-                                                width: 2,
-                                              ),
-                                            ),
-                                            focusColor: Color(0xff2a61be),
-                                            hintText: '이름을 입력하세요 (최대 8자)',
-                                            hintStyle: TextStyle(
-                                              color: Color(0xffaaaaaa),
+                                            keyboardType: TextInputType.text,
+                                            onSubmitted: (value) =>
+                                                goLogin(), //키보드로 엔터 클릭 시 호출,
+                                            style: const TextStyle(
+                                              color: Color(0xff333333),
                                               fontSize: 14,
                                             ),
-                                            isDense: true,
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                              horizontal: 5,
-                                              vertical: 10,
+                                            cursorColor:
+                                                const Color(0xff2a61be),
+                                            decoration: const InputDecoration(
+                                              counterText: '',
+                                              border: UnderlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: Color(0xffeeeeee),
+                                                  width: 2,
+                                                ),
+                                              ),
+                                              enabledBorder:
+                                                  UnderlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: Color(0xffeeeeee),
+                                                  width: 2,
+                                                ),
+                                              ),
+                                              focusedBorder:
+                                                  UnderlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: Color(0xff2a61be),
+                                                  width: 2,
+                                                ),
+                                              ),
+                                              focusColor: Color(0xff2a61be),
+                                              hintText: '이름을 입력하세요 (최대 8자)',
+                                              hintStyle: TextStyle(
+                                                color: Color(0xffaaaaaa),
+                                                fontSize: 14,
+                                              ),
+                                              isDense: true,
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                horizontal: 5,
+                                                vertical: 10,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      const SizedBox(height: 25),
-                                      /* login btn */
-                                      Anchor(
-                                        onTap: goLogin,
-                                        child: Container(
-                                          width: 200,
-                                          height: 50,
-                                          decoration: const BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(25),
+                                        const SizedBox(
+                                          height: 15,
+                                        ),
+                                        Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Checkbox(
+                                                materialTapTargetSize:
+                                                    MaterialTapTargetSize
+                                                        .shrinkWrap,
+                                                visualDensity:
+                                                    VisualDensity.compact,
+                                                value: termsIsChecked,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    termsIsChecked =
+                                                        value ?? false;
+                                                  });
+                                                },
+                                              ),
+                                              Anchor(
+                                                onTap: () =>
+                                                    Util.showTermsDialog(
+                                                        context),
+                                                child: const Text(
+                                                  "사용자 이용 약관",
+                                                  style: TextStyle(
+                                                    color: Colors.blue,
+                                                  ),
+                                                ),
+                                              ),
+                                              const Text(
+                                                "에 동의합니다.",
+                                              ),
+                                            ]),
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        /* login btn */
+                                        Anchor(
+                                          onTap: goLogin,
+                                          child: Container(
+                                            width: 200,
+                                            height: 50,
+                                            decoration: const BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(25),
+                                              ),
+                                              gradient: LinearGradient(
+                                                colors: [
+                                                  Color(0xff2a61be),
+                                                  Color(0xff5d48c6)
+                                                ],
+                                              ),
                                             ),
-                                            gradient: LinearGradient(
-                                              colors: [
-                                                Color(0xff2a61be),
-                                                Color(0xff5d48c6)
-                                              ],
-                                            ),
-                                          ),
-                                          alignment: Alignment.center,
-                                          child: const Text(
-                                            '로그인',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16,
+                                            alignment: Alignment.center,
+                                            child: const Text(
+                                              '로그인',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        /* profile Image Area */
-                        Positioned(
-                          bottom: 200 - (110 / 2),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Anchor(
-                                onTap: () => changeImage('left'),
-                                child: SizedBox(
-                                  width: 30,
-                                  height: 30,
-                                  child: Image.asset(
-                                    'assets/common/arr_left.png',
-                                  ),
-                                ),
-                              ),
-                              GestureDetector(
-                                onHorizontalDragEnd: (details) {
-                                  var dx = details.velocity.pixelsPerSecond.dx;
-                                  if (dx > 300) {
-                                    changeImage('left');
-                                  } else if (dx < -300) {
-                                    changeImage('right');
-                                  }
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(7),
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Color(0xffeaeaea),
-                                  ),
-                                  clipBehavior: Clip.hardEdge,
-                                  child: ClipOval(
-                                    child: SizedBox.fromSize(
-                                      size: const Size.fromRadius(48),
-                                      child: selectedImage,
+                                      ],
                                     ),
-                                  ),
-                                ),
-                              ),
-                              Anchor(
-                                onTap: () => changeImage('right'),
-                                child: SizedBox(
-                                  width: 30,
-                                  height: 30,
-                                  child: Image.asset(
-                                    'assets/common/arr_right.png',
-                                  ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
+
+                          /* profile Image Area */
+                          Positioned(
+                            bottom: loginBackgroundHeight - (110 / 2),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Anchor(
+                                  onTap: () => changeImage('left'),
+                                  child: SizedBox(
+                                    width: 30,
+                                    height: 30,
+                                    child: Image.asset(
+                                      'assets/common/arr_left.png',
+                                    ),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onHorizontalDragEnd: (details) {
+                                    var dx =
+                                        details.velocity.pixelsPerSecond.dx;
+                                    if (dx > 300) {
+                                      changeImage('left');
+                                    } else if (dx < -300) {
+                                      changeImage('right');
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(7),
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Color(0xffeaeaea),
+                                    ),
+                                    clipBehavior: Clip.hardEdge,
+                                    child: ClipOval(
+                                      child: SizedBox.fromSize(
+                                        size: const Size.fromRadius(48),
+                                        child: selectedImage,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Anchor(
+                                  onTap: () => changeImage('right'),
+                                  child: SizedBox(
+                                    width: 30,
+                                    height: 30,
+                                    child: Image.asset(
+                                      'assets/common/arr_right.png',
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const Positioned(bottom: 0, child: FooterArea()),
-                ],
+                    const Positioned(bottom: 0, child: FooterArea()),
+                  ],
+                ),
               ),
             ),
           ),

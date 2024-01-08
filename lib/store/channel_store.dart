@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_youtube/vo/chat_item.dart';
+import 'package:flutter_video/vo/chat_item.dart';
 import 'package:vchatcloud_flutter_sdk/util.dart';
 import 'package:vchatcloud_flutter_sdk/vchatcloud_flutter_sdk.dart';
 
@@ -7,6 +7,7 @@ class ChannelStore extends ChangeNotifier {
   Channel? channel;
   List<ChatItem> chatLog = [];
   List<UserModel> clientList = [];
+  List<String> banClientList = [];
   Map<String, String> translateClientKeyMap = {};
 
   void setChannel(Channel channel) {
@@ -70,6 +71,10 @@ class ChannelStore extends ChangeNotifier {
 
   void removeTranslate(String clientKey) {
     translateClientKeyMap.remove(clientKey);
+    notifyListeners();
+  }
+
+  void changeMessage() {
     notifyListeners();
   }
 
